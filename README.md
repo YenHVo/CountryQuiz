@@ -1,4 +1,4 @@
-# Country Quiz Application
+# Application
 Project 4 for CSCI4060 by Yen Vo and Esha Patel
 
 ## Overview
