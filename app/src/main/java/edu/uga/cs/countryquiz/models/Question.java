@@ -1,8 +1,9 @@
 package edu.uga.cs.countryquiz.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Question {
+public class Question implements Serializable {
     private final Country country;
     private final List<Country> options;
     private int selectedAnswer; // default for unselected

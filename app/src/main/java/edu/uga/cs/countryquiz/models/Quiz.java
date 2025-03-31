@@ -1,9 +1,10 @@
 package edu.uga.cs.countryquiz.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Quiz {
+public class Quiz implements Serializable {
     private final List<Question> questions;
     //private Date date;
     private int score;
