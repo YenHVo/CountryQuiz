@@ -21,6 +21,9 @@ import edu.uga.cs.countryquiz.models.Quiz;
 public class QuizActivity extends AppCompatActivity {
 
     private Quiz quiz;
+    private QuizData quizData;
+    private List<String[]> countryList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,10 @@ public class QuizActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        quizData = new quizData(this);
+        quizData.open();
+        countryList = quizData.getAllCountries();
+        QuizData.close();
 
         onQuizCreated();
     }
@@ -45,6 +52,7 @@ public class QuizActivity extends AppCompatActivity {
         for (int i = 0; i < 6; i++) {
             List<Country> options = new ArrayList<Country>();
             Country selectedCountry = new Country();
+
             // Selecting a country from the database
             // todo: find a way to pull a random country from the database
 
@@ -63,6 +71,7 @@ public class QuizActivity extends AppCompatActivity {
 
         QuestionFragment questionFragment = new QuestionFragment();
         Bundle args = new Bundle();
+        args.putSerializable("quiz", (Serializable) quiz);
         // todo: find a way to pass quiz into args. maybe: args.putSerializable("quiz", (Serializable) quiz);
         questionFragment.setArguments(args);
 
