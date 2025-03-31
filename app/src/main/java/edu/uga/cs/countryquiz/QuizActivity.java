@@ -38,7 +38,7 @@ public class QuizActivity extends AppCompatActivity {
         quizData = new QuizData(this);
         quizData.open();
         countryList = quizData.getAllCountries();
-        QuizData.close();
+        quizData.close();
 
         onQuizCreated();
     }
