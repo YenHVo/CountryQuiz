@@ -40,14 +40,31 @@ public class QuizActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        quizData = new QuizData(this);
-        quizData.open();
-        countryList = quizData.getAllCountries();
-        quizData.close();
 
-        onQuizCreated();
+        // start AsyncTask to load countries in background
+        new FetchCountries().execute();
     }
+    // AsyncTask to fetch countries from database in background
+    private class FetchCountries extends AsyncTask<Void, Void, List<String[]>> {
+        @Override
+        protected List<String[]> doInBackground(Void... voids) {
 
+            quizData = new QuizData(QuizActivity.this);
+            quizData.open();
+            List<String[]> countries = quizData.getAllCountries();
+            quizData.close();
+            return countries;
+        }
+
+        @Override
+        protected void onPostExecute(List<String[]> countries) {
+            super.onPostExecute(countries);
+            countryList = countries;
+
+            // Proceed to create the quiz after the data is loaded
+            onQuizCreated();
+        }
+    }
     // todo: can make the quiz here and pass the information to the fragment
     // todo: ensure that the country schema matches Country class in which it can use getContinent()
     // todo: optional but modify the Question and Quiz class so that its easier to add questions to the class without needing to create a new arraylist everytime?
@@ -59,7 +76,7 @@ public class QuizActivity extends AppCompatActivity {
         // ensure countryList is not empty
         if (countryList == null || countryList.isEmpty()) {
             Log.e("QuizActivity", "No countries found in database!");
-            return; // prevent crash
+            return; // Prevent crash
         }
 
         for (int i = 0; i < 6; i++) {
@@ -68,7 +85,7 @@ public class QuizActivity extends AppCompatActivity {
             String[] correctData = countryList.get(correctIndex);
             Country correctCountry = new Country(correctData[0], correctData[1]);
 
-            // select 3 incorrect answers from different continents
+
             Set<Country> options = new HashSet<>();
             options.add(correctCountry);
 
@@ -77,7 +94,7 @@ public class QuizActivity extends AppCompatActivity {
                 String[] countryData = countryList.get(randIndex);
                 Country option = new Country(countryData[0], countryData[1]);
 
-                // Ensure no duplicate answers & different continents
+                // ensure no duplicate answers & different continents
                 if (!option.getContinent().equals(correctCountry.getContinent()) && !options.contains(option)) {
                     options.add(option);
                 }
@@ -87,27 +104,23 @@ public class QuizActivity extends AppCompatActivity {
             List<Country> optionList = new ArrayList<>(options);
             Collections.shuffle(optionList);
 
-            // create Question and add it to the quiz
+            // create question and add it to the quiz
             Question question = new Question(correctCountry, optionList);
             quizQuestions.add(question);
         }
 
         quiz = new Quiz(quizQuestions);
-        // todo: pass the quiz to the fragment
-
+        // pass the quiz to the fragment
         QuestionFragment questionFragment = new QuestionFragment();
         Bundle args = new Bundle();
         args.putSerializable("quiz", (Serializable) quiz);
-        // todo: find a way to pass quiz into args. maybe: args.putSerializable("quiz", (Serializable) quiz);
         questionFragment.setArguments(args);
 
-        // todo: portrait and landscape fixes
+        // handle fragment transaction to show quiz
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, questionFragment);
         transaction.addToBackStack(null);
         transaction.commit();
-
-        // todo: double check this code with his own, not 100%
     }
 }
