@@ -1,6 +1,7 @@
 package edu.uga.cs.countryquiz;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +13,11 @@ import androidx.fragment.app.FragmentTransaction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import edu.uga.cs.countryquiz.models.Country;
 import edu.uga.cs.countryquiz.models.Question;
@@ -48,25 +53,46 @@ public class QuizActivity extends AppCompatActivity {
     // todo: optional but modify the Question and Quiz class so that its easier to add questions to the class without needing to create a new arraylist everytime?
 
     public void onQuizCreated() {
-        List<Question> quizQuestions = new ArrayList<Question>();
+        List<Question> quizQuestions = new ArrayList<>();
+        Random random = new Random();
+
+        // ensure countryList is not empty
+        if (countryList == null || countryList.isEmpty()) {
+            Log.e("QuizActivity", "No countries found in database!");
+            return; // prevent crash
+        }
+
         for (int i = 0; i < 6; i++) {
-            List<Country> options = new ArrayList<Country>();
-            Country selectedCountry = new Country();
+            // pick a random country as the correct answer
+            int correctIndex = random.nextInt(countryList.size());
+            String[] correctData = countryList.get(correctIndex);
+            Country correctCountry = new Country(correctData[0], correctData[1]);
 
-            // Selecting a country from the database
-            // todo: find a way to pull a random country from the database
+            // select 3 incorrect answers from different continents
+            Set<Country> options = new HashSet<>();
+            options.add(correctCountry);
 
-            // Selecting other random continents from the database
-            // todo: add the other continents into the list
+            while (options.size() < 3) {
+                int randIndex = random.nextInt(countryList.size());
+                String[] countryData = countryList.get(randIndex);
+                Country option = new Country(countryData[0], countryData[1]);
 
-            // Randomizing the options
-            // todo: finding a way to randomize the options
+                // Ensure no duplicate answers & different continents
+                if (!option.getContinent().equals(correctCountry.getContinent()) && !options.contains(option)) {
+                    options.add(option);
+                }
+            }
 
-            Question question = new Question(selectedCountry, options);
+            // convert HashSet to List & Shuffle options
+            List<Country> optionList = new ArrayList<>(options);
+            Collections.shuffle(optionList);
+
+            // create Question and add it to the quiz
+            Question question = new Question(correctCountry, optionList);
             quizQuestions.add(question);
         }
 
-        Quiz quiz = new Quiz(quizQuestions);
+        quiz = new Quiz(quizQuestions);
         // todo: pass the quiz to the fragment
 
         QuestionFragment questionFragment = new QuestionFragment();
