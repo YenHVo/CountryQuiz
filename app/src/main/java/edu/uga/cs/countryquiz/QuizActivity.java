@@ -33,11 +33,7 @@ public class QuizActivity extends AppCompatActivity {
             return insets;
         });
 
-        // todo: portrait and landscape fixes
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.fragment_container, new QuestionFragment());
-        transaction.commit();
+        onQuizCreated();
     }
 
     // todo: can make the quiz here and pass the information to the fragment
@@ -70,6 +66,7 @@ public class QuizActivity extends AppCompatActivity {
         // todo: find a way to pass quiz into args. maybe: args.putSerializable("quiz", (Serializable) quiz);
         questionFragment.setArguments(args);
 
+        // todo: portrait and landscape fixes
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, questionFragment);
