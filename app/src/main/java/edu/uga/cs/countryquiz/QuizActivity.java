@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import edu.uga.cs.countryquiz.AsyncTask;
+import edu.uga.cs.countryquiz.QuestionFragment;
+import edu.uga.cs.countryquiz.R;
 import edu.uga.cs.countryquiz.models.Country;
 import edu.uga.cs.countryquiz.models.Question;
 import edu.uga.cs.countryquiz.models.Quiz;
@@ -28,7 +31,6 @@ public class QuizActivity extends AppCompatActivity {
     private Quiz quiz;
     private QuizData quizData;
     private List<String[]> countryList;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class QuizActivity extends AppCompatActivity {
         // start AsyncTask to load countries in background
         new FetchCountries().execute();
     }
+
     // AsyncTask to fetch countries from database in background
     private class FetchCountries extends AsyncTask<Void, Void, List<String[]>> {
         @Override
@@ -51,7 +54,7 @@ public class QuizActivity extends AppCompatActivity {
 
             quizData = new QuizData(QuizActivity.this);
             quizData.open();
-            List<String[]> countries = quizData.getAllCountries();
+            List<String[]> countries = quizData.getAllCountries(); // fetch countries
             quizData.close();
             return countries;
         }
@@ -65,10 +68,8 @@ public class QuizActivity extends AppCompatActivity {
             onQuizCreated();
         }
     }
-    // todo: can make the quiz here and pass the information to the fragment
-    // todo: ensure that the country schema matches Country class in which it can use getContinent()
-    // todo: optional but modify the Question and Quiz class so that its easier to add questions to the class without needing to create a new arraylist everytime?
 
+    // Method to create the quiz after countries are loaded
     public void onQuizCreated() {
         List<Question> quizQuestions = new ArrayList<>();
         Random random = new Random();
@@ -84,7 +85,6 @@ public class QuizActivity extends AppCompatActivity {
             int correctIndex = random.nextInt(countryList.size());
             String[] correctData = countryList.get(correctIndex);
             Country correctCountry = new Country(correctData[0], correctData[1]);
-
 
             Set<Country> options = new HashSet<>();
             options.add(correctCountry);

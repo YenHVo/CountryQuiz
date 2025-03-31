@@ -7,10 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.uga.cs.countryquiz.CountryQuizDBHelper;
+import edu.uga.cs.countryquiz.R;
 
 public class QuizData {
 
@@ -35,18 +38,17 @@ public class QuizData {
         return db != null && db.isOpen();
     }
 
-    // insert countries from CSV into the db
     public void insertCountriesFromCSV() {
-        // Read and parse the CSV file
+        if (!isCountriesTableEmpty()) {
+            return; // avoid duplicate entries
+        }
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(context.getResources().openRawResource(R.raw.country_continent)));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
                 if (data.length == 2) {
-                    String countryName = data[0].trim();
-                    String continent = data[1].trim();
-                    insertCountry(countryName, continent);  // Insert each country and continent into the DB
+                    insertCountry(data[0].trim(), data[1].trim());
                 }
             }
             reader.close();
@@ -55,7 +57,6 @@ public class QuizData {
         }
     }
 
-    // insert a single country into the db
     private void insertCountry(String name, String continent) {
         ContentValues values = new ContentValues();
         values.put(CountryQuizDBHelper.COLUMN_COUNTRY_NAME, name);
@@ -63,45 +64,6 @@ public class QuizData {
         db.insert(CountryQuizDBHelper.TABLE_COUNTRIES, null, values);
     }
 
-    // retrieve all countries from the db
-    public List<String[]> getAllCountries() {
-        List<String[]> countryList = new ArrayList<>();
-        Cursor cursor = db.query(CountryQuizDBHelper.TABLE_COUNTRIES,
-                new String[]{CountryQuizDBHelper.COLUMN_COUNTRY_NAME, CountryQuizDBHelper.COLUMN_CONTINENT},
-                null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            do {
-                countryList.add(new String[]{cursor.getString(0), cursor.getString(1)});
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return countryList;
-    }
-
-    // retrieve all quiz results from the db
-    public List<String[]> getAllQuizResults() {
-        List<String[]> quizResults = new ArrayList<>();
-        Cursor cursor = db.query(CountryQuizDBHelper.TABLE_QUIZZES,
-                new String[]{CountryQuizDBHelper.COLUMN_DATE, CountryQuizDBHelper.COLUMN_SCORE},
-                null, null, null, null, CountryQuizDBHelper.COLUMN_DATE + " DESC");
-        if (cursor.moveToFirst()) {
-            do {
-                quizResults.add(new String[]{cursor.getString(0), cursor.getString(1)});
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return quizResults;
-    }
-
-    // insert a new quiz result into the db
-    public void insertQuizResult(String date, int score) {
-        ContentValues values = new ContentValues();
-        values.put(CountryQuizDBHelper.COLUMN_DATE, date);
-        values.put(CountryQuizDBHelper.COLUMN_SCORE, score);
-        db.insert(CountryQuizDBHelper.TABLE_QUIZZES, null, values);
-    }
-
-    // check if the countries table is empty
     public boolean isCountriesTableEmpty() {
         Cursor cursor = db.query(CountryQuizDBHelper.TABLE_COUNTRIES,
                 new String[]{CountryQuizDBHelper.COLUMN_COUNTRY_ID},
@@ -110,4 +72,38 @@ public class QuizData {
         cursor.close();
         return isEmpty;
     }
+
+    // Add this method to fetch all countries from the database
+    public List<String[]> getAllCountries() {
+        List<String[]> countries = new ArrayList<>();
+        Cursor cursor = db.query(CountryQuizDBHelper.TABLE_COUNTRIES,
+                new String[]{CountryQuizDBHelper.COLUMN_COUNTRY_NAME, CountryQuizDBHelper.COLUMN_CONTINENT},
+                null, null, null, null, null);
+
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndex(CountryQuizDBHelper.COLUMN_COUNTRY_NAME));
+            String continent = cursor.getString(cursor.getColumnIndex(CountryQuizDBHelper.COLUMN_CONTINENT));
+            countries.add(new String[]{name, continent});
+        }
+        cursor.close();
+        return countries;
+    }
+    public List<String[]> getAllQuizResults() {
+        List<String[]> results = new ArrayList<>();
+
+        // Query to fetch quiz results (this assumes you have a table for quizzes in your database)
+        Cursor cursor = db.query(CountryQuizDBHelper.TABLE_QUIZZES,
+                new String[]{CountryQuizDBHelper.COLUMN_DATE, CountryQuizDBHelper.COLUMN_SCORE},
+                null, null, null, null, null);
+
+        while (cursor.moveToNext()) {
+            String date = cursor.getString(cursor.getColumnIndex(CountryQuizDBHelper.COLUMN_DATE));
+            int score = cursor.getInt(cursor.getColumnIndex(CountryQuizDBHelper.COLUMN_SCORE));
+            results.add(new String[]{date, String.valueOf(score)});
+        }
+        cursor.close();
+        return results;
+    }
 }
+
+
