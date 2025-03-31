@@ -35,7 +35,7 @@ public class QuizActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        quizData = new quizData(this);
+        quizData = new QuizData(this);
         quizData.open();
         countryList = quizData.getAllCountries();
         QuizData.close();
