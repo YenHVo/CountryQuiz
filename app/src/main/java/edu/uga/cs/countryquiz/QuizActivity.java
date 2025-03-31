@@ -7,8 +7,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import java.util.List;
+
+import edu.uga.cs.countryquiz.models.Country;
+import edu.uga.cs.countryquiz.models.Quiz;
 
 public class QuizActivity extends AppCompatActivity {
+
+    private Quiz quiz;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,5 +29,13 @@ public class QuizActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // todo: portrait and landscape fixes
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(R.id.fragment_container, new QuestionFragment());
+        transaction.commit();
     }
+
+    // todo: can make the quiz here and pass the information to the fragment
 }
