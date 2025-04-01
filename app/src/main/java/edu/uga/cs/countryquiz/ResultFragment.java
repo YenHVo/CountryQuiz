@@ -23,7 +23,6 @@ public class ResultFragment extends Fragment {
 
     private static final String ARG_SCORE = "score";
     private static final String ARG_TOTAL = "total";
-    private QuizData quizData;
 
     public ResultFragment() {
         // Required empty public constructor
@@ -39,60 +38,37 @@ public class ResultFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_result, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        TextView percentageText = view.findViewById(R.id.percentageText);
+        TextView scoreText = view.findViewById(R.id.scoreText);
+        Button retryButton = view.findViewById(R.id.retryButton);
+        Button historyButton = view.findViewById(R.id.historyButton);
+
         if (getArguments() != null) {
-            int score = getArguments().getInt(ARG_SCORE);
-            int total = getArguments().getInt(ARG_TOTAL);
+            int score = getArguments().getInt(ARG_SCORE, 0);
+            int total = getArguments().getInt(ARG_TOTAL, 1); // Avoid division by zero
+
             int percentage = (int) (((float) score / total) * 100);
-
-            TextView percentageText = view.findViewById(R.id.percentageText);
-            TextView scoreText = view.findViewById(R.id.scoreText);
-            Button retryButton = view.findViewById(R.id.retryButton);
-            Button historyButton = view.findViewById(R.id.historyButton);
-
             percentageText.setText(percentage + "%");
             scoreText.setText(String.format("You got %d out of %d questions correct!", score, total));
-
-            retryButton.setOnClickListener(v -> {
-                requireActivity().recreate();
-            });
-
-            historyButton.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), HistoryActivity.class);
-                startActivity(intent);
-            });
-        }
-    }
-
-    // AsyncTask to fetch quiz history
-    private class FetchQuizHistory extends AsyncTask<Void, Void, List<String[]>> {
-
-        @Override
-        protected List<String[]> doInBackground(Void... voids) {
-            quizData = new QuizData(requireContext());
-            quizData.open();
-            List<String[]> results = quizData.getAllQuizResults();
-            quizData.close();
-            return results;
         }
 
-        @Override
-        protected void onPostExecute(List<String[]> results) {
-            super.onPostExecute(results);
-            for (String[] result : results) {
-                String date = result[0];
-                String score = result[1];
+        retryButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), QuizActivity.class);
+            startActivity(intent);
+            requireActivity().finish();
+        });
 
-                System.out.println("Quiz on " + date + " scored: " + score);
-            }
-        }
+        historyButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), HistoryActivity.class);
+            startActivity(intent);
+        });
     }
 }
