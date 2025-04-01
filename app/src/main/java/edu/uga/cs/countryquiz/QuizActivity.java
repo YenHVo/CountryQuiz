@@ -35,7 +35,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private Quiz quiz;
     private QuizData quizData;
-    private int score = 0;
+    //private int score = 0;
     private List<String[]> countryList;
 
     private ViewPager2 viewPager;
@@ -162,13 +162,16 @@ public class QuizActivity extends AppCompatActivity {
         quiz = new Quiz(quizQuestions);
         setupViewPager(quiz);
     }
+    /*
     public void updateScore(boolean isCorrect) {
         if (isCorrect) {
             score++;
         }
-    }
+    }*/
+
     private void saveQuizResult() {
-        new SaveQuizResultTask().execute(score);
+        new SaveQuizResultTask().execute(quiz.getScore());
+        //adapter.notifyItemChanged(quiz.getQuestions().size());
     }
 
     private class SaveQuizResultTask extends AsyncTask<Integer, Void, Void> {
@@ -176,11 +179,7 @@ public class QuizActivity extends AppCompatActivity {
         protected Void doInBackground(Integer... params) {
             int finalScore = params[0];
             quizData.open(); // Open the database
-
-
             String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-
-
             SQLiteDatabase writableDb = quizData.getWritableDatabaseInstance();
 
             ContentValues values = new ContentValues();
@@ -198,7 +197,6 @@ public class QuizActivity extends AppCompatActivity {
 
         }
     }
-
 
     public void checkQuizCompletion() {
         if (quiz.isComplete() && viewPager.getCurrentItem() == quiz.getQuestions().size() - 1) {

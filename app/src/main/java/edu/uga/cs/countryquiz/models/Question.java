@@ -35,7 +35,8 @@ public class Question implements Serializable {
     }
 
     public boolean isCorrect() {
-        return options.get(selectedAnswer).equals(country.getContinent());
+        if (selectedAnswer == -1) return false;
+        return options.get(selectedAnswer).getContinent().equals(country.getContinent());
     }
 
  }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,18 +86,11 @@ public class QuestionFragment extends Fragment {
         optionsRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             int selectedIndex = group.indexOfChild(view.findViewById(checkedId));
             quiz.recordAnswer(position, selectedIndex);
+            Log.d("QuestionFragment", "Score: " + quiz.getScore());
 
             if (getActivity() instanceof QuizActivity) {
                 QuizActivity activity = (QuizActivity) getActivity();
-
-
-                boolean isCorrect = answerOptions.get(selectedIndex).getContinent()
-                        .equals(currentQuestion.getCountry().getContinent());
-
-
-                activity.updateScore(isCorrect);
                 activity.setSwipeEnabled(true);
-
 
                 if (position == quiz.getQuestions().size() - 1) {
                     activity.checkQuizCompletion();
