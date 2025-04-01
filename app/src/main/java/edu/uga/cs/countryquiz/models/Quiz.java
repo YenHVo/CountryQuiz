@@ -53,6 +53,11 @@ public class Quiz implements Serializable {
     }
 
     public boolean isComplete() {
-        return questionsAnswered >= questions.size();
+        for (Question question : questions) {
+            if (!question.isAnswered()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

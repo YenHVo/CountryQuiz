@@ -9,6 +9,8 @@ import edu.uga.cs.countryquiz.models.Quiz;
 
 public class QuizPagerAdapter extends FragmentStateAdapter {
     private final Quiz quiz;
+    private boolean showResults = false;
+
     public QuizPagerAdapter (
             FragmentManager fragmentManager,
             Lifecycle lifecycle,
@@ -19,12 +21,21 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public Fragment createFragment(int position){
-        return QuestionFragment
-                .newInstance( quiz, position );
+        if (position < quiz.getQuestions().size()) {
+            return QuestionFragment
+                    .newInstance( quiz, position );
+        } else {
+            return ResultFragment.newInstance(quiz.getScore(), quiz.getQuestions().size());
+        }
     }
 
     @Override
     public int getItemCount() {
-        return quiz.getQuestions().size();
+        return quiz.getQuestions().size() + 1;
+    }
+
+    public void showResults() {
+        showResults = true;
+        notifyDataSetChanged();
     }
 }

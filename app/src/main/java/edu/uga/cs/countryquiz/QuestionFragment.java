@@ -91,10 +91,11 @@ public class QuestionFragment extends Fragment {
 
             if (getActivity() instanceof QuizActivity) {
                 QuizActivity activity = (QuizActivity) getActivity();
+                activity.setSwipeEnabled(true);
 
-                // Only enable swiping if this isn't the last question
-                if (position < quiz.getQuestions().size() - 1) {
-                    activity.setSwipeEnabled(true);
+                // Check if this was the last question
+                if (position == quiz.getQuestions().size() - 1) {
+                    activity.checkQuizCompletion();
                 }
             }
         });

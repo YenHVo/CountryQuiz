@@ -68,21 +68,19 @@ public class QuizActivity extends AppCompatActivity {
         viewPager.setOrientation(
                 ViewPager2.ORIENTATION_HORIZONTAL );
         viewPager.setAdapter(adapter);
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                if (position == quiz.getQuestions().size()) {
+                    saveQuizResult();
+                }
+            }
+        });
     }
 
     public void setSwipeEnabled (boolean enabled) {
         viewPager.setUserInputEnabled(enabled);
-    }
-
-    public void goToNextQuestion() {
-        int nextPos = viewPager.getCurrentItem() + 1;
-        if (nextPos < adapter.getItemCount()) {
-            viewPager.setCurrentItem(nextPos, true);
-            setSwipeEnabled(false);
-        } else {
-            saveQuizResult();
-            showResultFragment();
-        }
     }
 
     // AsyncTask to fetch countries from database in background
@@ -193,7 +191,6 @@ public class QuizActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
             showResultFragment();
         }
     }
@@ -207,6 +204,14 @@ public class QuizActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, resultFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    public void checkQuizCompletion() {
+        if (quiz.isComplete() && viewPager.getCurrentItem() == quiz.getQuestions().size() - 1) {
+            // Enable swipe to results
+            adapter.showResults();
+            setSwipeEnabled(true);
+        }
     }
 
 }
