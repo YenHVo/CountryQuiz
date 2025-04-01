@@ -3,6 +3,7 @@ package edu.uga.cs.countryquiz;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class CountryQuizDBHelper extends SQLiteOpenHelper {
 
@@ -43,8 +44,10 @@ public class CountryQuizDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.d("CountryQuizDBHelper", "Upgrading database from version " + oldVersion + " to " + newVersion);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COUNTRIES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_QUIZZES);
-        onCreate(db);
+        onCreate(db); // Recreate database
     }
+
 }

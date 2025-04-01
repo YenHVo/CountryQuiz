@@ -22,15 +22,26 @@ public class QuizData {
     public QuizData(Context context) {
         this.context = context;
         dbHelper = new CountryQuizDBHelper(context);
+        open();
+        insertCountriesFromCSV();
+        close();
     }
 
+
     public void open() {
-        db = dbHelper.getWritableDatabase();
+        if (db == null || !db.isOpen()) {
+            db = dbHelper.getWritableDatabase();
+            Log.d("QuizData", "Database opened.");
+        }
     }
 
     public void close() {
-        dbHelper.close();
+        if (db != null && db.isOpen()) {
+            db.close();
+            Log.d("QuizData", "Database closed.");
+        }
     }
+
 
     public boolean isDBOpen() {
         return db != null && db.isOpen();
