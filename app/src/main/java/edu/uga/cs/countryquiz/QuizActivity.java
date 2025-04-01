@@ -1,5 +1,7 @@
 package edu.uga.cs.countryquiz;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,16 +14,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
 import android.os.AsyncTask;
-import edu.uga.cs.countryquiz.QuestionFragment;
-import edu.uga.cs.countryquiz.R;
 import edu.uga.cs.countryquiz.models.Country;
 import edu.uga.cs.countryquiz.models.Question;
 import edu.uga.cs.countryquiz.models.Quiz;
@@ -30,6 +32,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private Quiz quiz;
     private QuizData quizData;
+    private int score = 0;
     private List<String[]> countryList;
 
     @Override
@@ -125,6 +128,53 @@ public class QuizActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, questionFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void saveQuizResult() {
+        new SaveQuizResultTask().execute(score); // Run AsyncTask to save the result
+    }
+
+    // AsyncTask to save the quiz result into the database
+    private class SaveQuizResultTask extends AsyncTask<Integer, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            int finalScore = params[0];
+            quizData.open(); // Open the database
+
+            // Get the current date
+            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+            // Insert quiz result into the database
+            SQLiteDatabase writableDb = quizData.getWritableDatabaseInstance();  // Use the new method to get writable DB
+
+            ContentValues values = new ContentValues();
+            values.put(CountryQuizDBHelper.COLUMN_DATE, currentDate);
+            values.put(CountryQuizDBHelper.COLUMN_SCORE, finalScore);
+            writableDb.insert(CountryQuizDBHelper.TABLE_QUIZZES, null, values);
+
+            quizData.close(); // Close the database
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // Once the result is saved, proceed to show the result fragment
+            showResultFragment();
+        }
+
+
+    }
+
+    private void showResultFragment() {
+        ResultFragment resultFragment = ResultFragment.newInstance(score, 6); // Passing score and total questions
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, resultFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
