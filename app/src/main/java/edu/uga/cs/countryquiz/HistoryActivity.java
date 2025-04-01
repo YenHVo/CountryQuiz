@@ -26,7 +26,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Fetch quiz history asynchronously
+        // fetch quiz history asynchronously
         new FetchQuizHistoryTask().execute();
     }
 
