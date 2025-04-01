@@ -162,17 +162,9 @@ public class QuizActivity extends AppCompatActivity {
         quiz = new Quiz(quizQuestions);
         setupViewPager(quiz);
     }
-    /*
-    public void updateScore(boolean isCorrect) {
-        if (isCorrect) {
-            score++;
-            Log.d("QuizActivity", "Current Score: " + score);
-        }
-    }*/
 
     private void saveQuizResult() {
         new SaveQuizResultTask().execute(quiz.getScore());
-        //adapter.notifyItemChanged(quiz.getQuestions().size());
     }
 
     private class SaveQuizResultTask extends AsyncTask<Integer, Void, Void> {

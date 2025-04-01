@@ -30,7 +30,6 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
         }
     }
 
-
     @Override
     public int getItemCount() {
         return quiz.getQuestions().size() + 1;

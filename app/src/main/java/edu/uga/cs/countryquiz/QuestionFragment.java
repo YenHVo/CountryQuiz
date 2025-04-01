@@ -31,7 +31,6 @@ public class QuestionFragment extends Fragment {
     private TextView questionText;
     private RadioGroup optionsRadioGroup;
 
-
     public QuestionFragment() {
         // Required empty public constructor
     }
@@ -97,13 +96,11 @@ public class QuestionFragment extends Fragment {
                 }
             }
         });
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         if (getActivity() instanceof QuizActivity) {
             ((QuizActivity) getActivity()).setSwipeEnabled(
                     quiz.getQuestion(position).isAnswered()
