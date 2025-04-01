@@ -42,6 +42,9 @@ public class QuizData {
         }
     }
 
+    public SQLiteDatabase getWritableDatabaseInstance() {
+        return dbHelper.getWritableDatabase();
+    }
 
     public boolean isDBOpen() {
         return db != null && db.isOpen();

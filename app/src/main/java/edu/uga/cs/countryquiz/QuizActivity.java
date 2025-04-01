@@ -1,5 +1,7 @@
 package edu.uga.cs.countryquiz;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,16 +14,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
 import android.os.AsyncTask;
-import edu.uga.cs.countryquiz.QuestionFragment;
-import edu.uga.cs.countryquiz.R;
 import edu.uga.cs.countryquiz.models.Country;
 import edu.uga.cs.countryquiz.models.Question;
 import edu.uga.cs.countryquiz.models.Quiz;
@@ -30,6 +32,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private Quiz quiz;
     private QuizData quizData;
+    private int score = 0;
     private List<String[]> countryList;
 
     @Override
@@ -69,12 +72,12 @@ public class QuizActivity extends AppCompatActivity {
             }
             countryList = countries;
 
-            // Proceed to create the quiz after the data is loaded
+            // proceed to create the quiz after the data is loaded
             onQuizCreated();
         }
     }
 
-    // Method to create the quiz after countries are loaded
+    // method to create the quiz after countries are loaded
     public void onQuizCreated() {
         List<Question> quizQuestions = new ArrayList<>();
         Random random = new Random();
@@ -86,45 +89,111 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         for (int i = 0; i < 6; i++) {
-            // pick a random country as the correct answer
+
             int correctIndex = random.nextInt(countryList.size());
             String[] correctData = countryList.get(correctIndex);
             Country correctCountry = new Country(correctData[0], correctData[1]);
 
+
             Set<Country> options = new HashSet<>();
             options.add(correctCountry);
 
-            while (options.size() < 3) {
+
+            Set<Integer> usedIndices = new HashSet<>();
+            usedIndices.add(correctIndex);
+
+
+            Set<String> usedContinents = new HashSet<>();
+            usedContinents.add(correctCountry.getContinent());
+
+
+            while (options.size() < 3) {  // 1 correct + 3 wrong options = 4 total options
                 int randIndex = random.nextInt(countryList.size());
+
+
+                if (usedIndices.contains(randIndex)) {
+                    continue;
+                }
+
                 String[] countryData = countryList.get(randIndex);
                 Country option = new Country(countryData[0], countryData[1]);
 
-                // ensure no duplicate answers & different continents
-                if (!option.getContinent().equals(correctCountry.getContinent()) && !options.contains(option)) {
+
+                if (!usedContinents.contains(option.getContinent())) {
                     options.add(option);
+                    usedIndices.add(randIndex);  // Mark this index as used
+                    usedContinents.add(option.getContinent());  // Add continent to used set
                 }
             }
 
-            // convert HashSet to List & Shuffle options
+
             List<Country> optionList = new ArrayList<>(options);
             Collections.shuffle(optionList);
 
-            // create question and add it to the quiz
+
             Question question = new Question(correctCountry, optionList);
             quizQuestions.add(question);
         }
 
         quiz = new Quiz(quizQuestions);
-        // pass the quiz to the fragment
+
         QuestionFragment questionFragment = new QuestionFragment();
         Bundle args = new Bundle();
         args.putSerializable("quiz", (Serializable) quiz);
         questionFragment.setArguments(args);
 
-        // handle fragment transaction to show quiz
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, questionFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+
+    private void saveQuizResult() {
+        new SaveQuizResultTask().execute(score); // Run AsyncTask to save the result
+    }
+
+
+    private class SaveQuizResultTask extends AsyncTask<Integer, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            int finalScore = params[0];
+            quizData.open(); // Open the database
+
+            // Get the current date
+            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+            // Insert quiz result into the database
+            SQLiteDatabase writableDb = quizData.getWritableDatabaseInstance();
+
+            ContentValues values = new ContentValues();
+            values.put(CountryQuizDBHelper.COLUMN_DATE, currentDate);
+            values.put(CountryQuizDBHelper.COLUMN_SCORE, finalScore);
+            writableDb.insert(CountryQuizDBHelper.TABLE_QUIZZES, null, values);
+
+            quizData.close(); // Close the database
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            showResultFragment();
+        }
+
+
+    }
+
+    private void showResultFragment() {
+        ResultFragment resultFragment = ResultFragment.newInstance(score, 6);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, resultFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
