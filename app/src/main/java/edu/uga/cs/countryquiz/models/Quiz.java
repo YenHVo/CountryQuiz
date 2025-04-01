@@ -16,8 +16,8 @@ public class Quiz implements Serializable {
         }
         this.questions = new ArrayList<>(questions);
         this.score = 0;
-        this.questionsAnswered = 1;
-        // add a this for the date
+        this.questionsAnswered = 0;
+
     }
 
     public List<Question> getQuestions() {
