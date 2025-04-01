@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ public class ResultFragment extends Fragment {
         if (getArguments() != null) {
             score = getArguments().getInt(ARG_SCORE, 0);
             totalQuestions = getArguments().getInt(ARG_TOTAL, 1);
+            Log.d("ResultFragment", "Score: " + score + ", Total Questions: " + totalQuestions);
         }
 
 

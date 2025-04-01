@@ -165,6 +165,7 @@ public class QuizActivity extends AppCompatActivity {
     public void updateScore(boolean isCorrect) {
         if (isCorrect) {
             score++;
+            Log.d("QuizActivity", "Current Score: " + score);
         }
     }
     private void saveQuizResult() {
