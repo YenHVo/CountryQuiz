@@ -1,14 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ResultFragment">
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#FFFFFF"
+    android:padding="16dp">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/trophyImage"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:src="@drawable/trophy"
+        android:paddingBottom="20dp" />
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/scoreMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Score:"
+        android:textSize="20sp"
+        android:textColor="#000000"/>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/percentageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Percentage Here"
+        android:textSize="36sp"
+        android:textColor="#000000"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/scoreText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="You got 0 out of 0 questions correct!"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textColor="#000000"/>
+
+    <Button
+        android:id="@+id/retryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Try Again"
+        android:textColor="#FFFFFF"
+        android:background="#000000"
+        android:padding="12dp"/>
+
+    <Button
+        android:id="@+id/historyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="View History"
+        android:textColor="#FFFFFF"
+        android:background="#000000"
+        android:padding="12dp"/>
+</LinearLayout>

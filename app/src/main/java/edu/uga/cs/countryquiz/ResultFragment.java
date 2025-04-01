@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 /**
@@ -44,9 +45,23 @@ public class ResultFragment extends Fragment {
         if (getArguments() != null) {
             int score = getArguments().getInt(ARG_SCORE);
             int total = getArguments().getInt(ARG_TOTAL);
+            int percentage = (int) (((float) score / total) * 100);
 
-            TextView resultText = view.findViewById(R.id.resultText);
-            resultText.setText("You scored " + score + " out of " + total);
+            TextView percentageText = view.findViewById(R.id.percentageText);
+            TextView scoreText = view.findViewById(R.id.scoreText);
+            Button retryButton = view.findViewById(R.id.retryButton);
+            Button historyButton = view.findViewById(R.id.historyButton);
+
+            percentageText.setText(percentage + "%");
+            scoreText.setText(String.format("You got %d out of %d questions correct!", score, total));
+
+            retryButton.setOnClickListener(v -> {
+                requireActivity().recreate();
+            });
+
+            historyButton.setOnClickListener(v -> {
+               // todo: implement history button here
+            });
         }
     }
 }
