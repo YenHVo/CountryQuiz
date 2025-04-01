@@ -9,19 +9,6 @@
     android:background="@drawable/doodle"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/purposeBlurb"
-        android:layout_width="196dp"
-        android:layout_height="71dp"
-        android:text="Welcome to the Country Quiz! See how well you can identify which continent a country is in. Good Luck!"
-        android:textAlignment="center"
-        android:textColor="#121111"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <ImageView
         android:id="@+id/logo"
         android:layout_width="120dp"
@@ -48,11 +35,12 @@
 
     <TextView
         android:id="@+id/subtitle"
-        android:layout_width="wrap_content"
+        android:layout_width="275dp"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="Test your geography knowledge"
+        android:text="Welcome! See how well you can identify which continent a country is in. Good Luck!"
         android:textSize="16sp"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/startButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +76,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/startButton"
         app:layout_constraintVertical_bias="0.3" />
-
-    <!-- Footer credit -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
