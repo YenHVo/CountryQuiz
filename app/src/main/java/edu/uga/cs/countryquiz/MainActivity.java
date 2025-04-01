@@ -38,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
         // todo: implement history button
         historyButton.setOnClickListener(v -> {
-
+            Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+            startActivity(intent);
         });
     }
 }
