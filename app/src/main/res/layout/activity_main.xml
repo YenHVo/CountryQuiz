@@ -9,6 +9,19 @@
     android:background="@drawable/doodle"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/purposeBlurb"
+        android:layout_width="196dp"
+        android:layout_height="71dp"
+        android:text="Welcome to the Country Quiz! See how well you can identify which continent a country is in. Good Luck!"
+        android:textAlignment="center"
+        android:textColor="#121111"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <ImageView
         android:id="@+id/logo"
         android:layout_width="120dp"
