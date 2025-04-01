@@ -72,12 +72,12 @@ public class QuizActivity extends AppCompatActivity {
             }
             countryList = countries;
 
-            // Proceed to create the quiz after the data is loaded
+            // proceed to create the quiz after the data is loaded
             onQuizCreated();
         }
     }
 
-    // Method to create the quiz after countries are loaded
+    // method to create the quiz after countries are loaded
     public void onQuizCreated() {
         List<Question> quizQuestions = new ArrayList<>();
         Random random = new Random();
@@ -136,7 +136,7 @@ public class QuizActivity extends AppCompatActivity {
         new SaveQuizResultTask().execute(score); // Run AsyncTask to save the result
     }
 
-    // AsyncTask to save the quiz result into the database
+
     private class SaveQuizResultTask extends AsyncTask<Integer, Void, Void> {
 
         @Override
@@ -148,7 +148,7 @@ public class QuizActivity extends AppCompatActivity {
             String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
             // Insert quiz result into the database
-            SQLiteDatabase writableDb = quizData.getWritableDatabaseInstance();  // Use the new method to get writable DB
+            SQLiteDatabase writableDb = quizData.getWritableDatabaseInstance();
 
             ContentValues values = new ContentValues();
             values.put(CountryQuizDBHelper.COLUMN_DATE, currentDate);
@@ -163,7 +163,7 @@ public class QuizActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            // Once the result is saved, proceed to show the result fragment
+
             showResultFragment();
         }
 
@@ -171,7 +171,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void showResultFragment() {
-        ResultFragment resultFragment = ResultFragment.newInstance(score, 6); // Passing score and total questions
+        ResultFragment resultFragment = ResultFragment.newInstance(score, 6);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, resultFragment);
