@@ -89,48 +89,67 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         for (int i = 0; i < 6; i++) {
-            // pick a random country as the correct answer
+
             int correctIndex = random.nextInt(countryList.size());
             String[] correctData = countryList.get(correctIndex);
             Country correctCountry = new Country(correctData[0], correctData[1]);
 
+
             Set<Country> options = new HashSet<>();
             options.add(correctCountry);
 
-            while (options.size() < 3) {
+
+            Set<Integer> usedIndices = new HashSet<>();
+            usedIndices.add(correctIndex);
+
+
+            Set<String> usedContinents = new HashSet<>();
+            usedContinents.add(correctCountry.getContinent());
+
+
+            while (options.size() < 3) {  // 1 correct + 3 wrong options = 4 total options
                 int randIndex = random.nextInt(countryList.size());
+
+
+                if (usedIndices.contains(randIndex)) {
+                    continue;
+                }
+
                 String[] countryData = countryList.get(randIndex);
                 Country option = new Country(countryData[0], countryData[1]);
 
-                // ensure no duplicate answers & different continents
-                if (!option.getContinent().equals(correctCountry.getContinent()) && !options.contains(option)) {
+
+                if (!usedContinents.contains(option.getContinent())) {
                     options.add(option);
+                    usedIndices.add(randIndex);  // Mark this index as used
+                    usedContinents.add(option.getContinent());  // Add continent to used set
                 }
             }
 
-            // convert HashSet to List & Shuffle options
+
             List<Country> optionList = new ArrayList<>(options);
             Collections.shuffle(optionList);
 
-            // create question and add it to the quiz
+
             Question question = new Question(correctCountry, optionList);
             quizQuestions.add(question);
         }
 
         quiz = new Quiz(quizQuestions);
-        // pass the quiz to the fragment
+
         QuestionFragment questionFragment = new QuestionFragment();
         Bundle args = new Bundle();
         args.putSerializable("quiz", (Serializable) quiz);
         questionFragment.setArguments(args);
 
-        // handle fragment transaction to show quiz
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_container, questionFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
 
     private void saveQuizResult() {
         new SaveQuizResultTask().execute(score); // Run AsyncTask to save the result
