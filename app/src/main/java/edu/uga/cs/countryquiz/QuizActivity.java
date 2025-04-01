@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,8 @@ import java.util.Random;
 import java.util.Set;
 
 import android.os.AsyncTask;
+import android.view.View;
+
 import edu.uga.cs.countryquiz.models.Country;
 import edu.uga.cs.countryquiz.models.Question;
 import edu.uga.cs.countryquiz.models.Quiz;
@@ -34,6 +37,9 @@ public class QuizActivity extends AppCompatActivity {
     private QuizData quizData;
     private int score = 0;
     private List<String[]> countryList;
+
+    private ViewPager2 viewPager;
+    private QuizPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +52,37 @@ public class QuizActivity extends AppCompatActivity {
             return insets;
         });
 
+        viewPager = findViewById(R.id.viewPager);
+        viewPager.setUserInputEnabled(false);
+
         // start AsyncTask to load countries in background
         new FetchCountries().execute();
+    }
+
+    private void setupViewPager(Quiz quiz) {
+        adapter = new QuizPagerAdapter(
+                getSupportFragmentManager(),
+                getLifecycle(),
+                quiz
+        );
+        viewPager.setOrientation(
+                ViewPager2.ORIENTATION_HORIZONTAL );
+        viewPager.setAdapter(adapter);
+    }
+
+    public void setSwipeEnabled (boolean enabled) {
+        viewPager.setUserInputEnabled(enabled);
+    }
+
+    public void goToNextQuestion() {
+        int nextPos = viewPager.getCurrentItem() + 1;
+        if (nextPos < adapter.getItemCount()) {
+            viewPager.setCurrentItem(nextPos, true);
+            setSwipeEnabled(false);
+        } else {
+            saveQuizResult();
+            showResultFragment();
+        }
     }
 
     // AsyncTask to fetch countries from database in background
@@ -89,27 +124,21 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         for (int i = 0; i < 6; i++) {
-
             int correctIndex = random.nextInt(countryList.size());
             String[] correctData = countryList.get(correctIndex);
             Country correctCountry = new Country(correctData[0], correctData[1]);
 
-
             Set<Country> options = new HashSet<>();
             options.add(correctCountry);
-
 
             Set<Integer> usedIndices = new HashSet<>();
             usedIndices.add(correctIndex);
 
-
             Set<String> usedContinents = new HashSet<>();
             usedContinents.add(correctCountry.getContinent());
 
-
             while (options.size() < 3) {  // 1 correct + 3 wrong options = 4 total options
                 int randIndex = random.nextInt(countryList.size());
-
 
                 if (usedIndices.contains(randIndex)) {
                     continue;
@@ -118,7 +147,6 @@ public class QuizActivity extends AppCompatActivity {
                 String[] countryData = countryList.get(randIndex);
                 Country option = new Country(countryData[0], countryData[1]);
 
-
                 if (!usedContinents.contains(option.getContinent())) {
                     options.add(option);
                     usedIndices.add(randIndex);  // Mark this index as used
@@ -126,38 +154,22 @@ public class QuizActivity extends AppCompatActivity {
                 }
             }
 
-
             List<Country> optionList = new ArrayList<>(options);
             Collections.shuffle(optionList);
-
 
             Question question = new Question(correctCountry, optionList);
             quizQuestions.add(question);
         }
 
         quiz = new Quiz(quizQuestions);
-
-        QuestionFragment questionFragment = new QuestionFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("quiz", (Serializable) quiz);
-        questionFragment.setArguments(args);
-
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.fragment_container, questionFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        setupViewPager(quiz);
     }
-
 
     private void saveQuizResult() {
         new SaveQuizResultTask().execute(score); // Run AsyncTask to save the result
     }
 
-
     private class SaveQuizResultTask extends AsyncTask<Integer, Void, Void> {
-
         @Override
         protected Void doInBackground(Integer... params) {
             int finalScore = params[0];
@@ -178,23 +190,23 @@ public class QuizActivity extends AppCompatActivity {
             return null;
         }
 
-
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
             showResultFragment();
         }
-
-
     }
 
     private void showResultFragment() {
-        ResultFragment resultFragment = ResultFragment.newInstance(score, 6);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.fragment_container, resultFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        // Remove the ViewPager from view
+        viewPager.setVisibility(View.GONE);
+
+        ResultFragment resultFragment = ResultFragment.newInstance(quiz.getScore(), quiz.getQuestions().size());
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, resultFragment)
+                .addToBackStack(null)
+                .commit();
     }
+
 }

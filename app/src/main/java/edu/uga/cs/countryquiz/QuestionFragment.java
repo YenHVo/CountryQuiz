@@ -1,23 +1,18 @@
 package edu.uga.cs.countryquiz;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.uga.cs.countryquiz.models.Question;
@@ -27,27 +22,34 @@ import edu.uga.cs.countryquiz.models.Country;
 public class QuestionFragment extends Fragment {
 
     private static final String ARG_QUIZ = "quiz";
+    private static final String ARG_POSITION = "position";
     private Quiz quiz;
+    private int position;
 
     private TextView questionHeader;
     private TextView questionText;
     private RadioGroup optionsRadioGroup;
-    private RadioButton optionOne;
-    private RadioButton optionTwo;
-    private RadioButton optionThree;
-    private RadioButton optionFour;
-    private ViewPager2 viewPager;
 
     public QuestionFragment() {
         // Required empty public constructor
     }
 
-    public static QuestionFragment newInstance(Quiz quiz) {
+    public static QuestionFragment newInstance(Quiz quiz, int position) {
         QuestionFragment fragment = new QuestionFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_QUIZ, (Serializable) quiz);
+        args.putSerializable(ARG_QUIZ, quiz);
+        args.putInt(ARG_POSITION, position);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            quiz = (Quiz) getArguments().getSerializable(ARG_QUIZ);
+            position = getArguments().getInt(ARG_POSITION);
+        }
     }
 
     @Override
@@ -59,20 +61,14 @@ public class QuestionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (getArguments() != null) {
-            quiz = (Quiz) getArguments().getSerializable(ARG_QUIZ);
-        }
-
         questionHeader = view.findViewById(R.id.questionHeader);
         questionText = view.findViewById(R.id.questionText);
         optionsRadioGroup = view.findViewById(R.id.options);
 
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        int currentPosition = viewPager.getCurrentItem();
-        Question currentQuestion = quiz.getQuestion(currentPosition);
+        Question currentQuestion = quiz.getQuestion(position);
         List<Country> answerOptions = currentQuestion.getOptions();
 
-        questionHeader.setText("Question " + (currentPosition + 1) + "/" + quiz.getQuestions().size());
+        questionHeader.setText("Question " + (position + 1) + "/" + quiz.getQuestions().size());
         questionText.setText("What continent is " + currentQuestion.getCountry().getName() + " in?");
 
         for (int i = 0; i < optionsRadioGroup.getChildCount() && i < answerOptions.size(); i++) {
@@ -83,24 +79,35 @@ public class QuestionFragment extends Fragment {
             ((RadioButton) optionsRadioGroup.getChildAt(currentQuestion.getSelectedAnswer())).setChecked(true);
         }
 
+        // Restore previous selection if exists
+        if (currentQuestion.getSelectedAnswer() != -1) {
+            ((RadioButton) optionsRadioGroup.getChildAt(currentQuestion.getSelectedAnswer()))
+                    .setChecked(true);
+        }
+
         optionsRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             int selectedIndex = group.indexOfChild(view.findViewById(checkedId));
-            quiz.recordAnswer(currentPosition, selectedIndex);
+            quiz.recordAnswer(position, selectedIndex);
 
-        });
+            if (getActivity() instanceof QuizActivity) {
+                QuizActivity activity = (QuizActivity) getActivity();
 
-        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected (int position) {
-                super.onPageSelected(position);
-                if (position == quiz.getQuestions().size() - 1 && quiz.isComplete()) {
-                    ResultFragment resultFragment = ResultFragment.newInstance(quiz.getScore(), quiz.getQuestions().size());
-                    requireActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, resultFragment)
-                            .addToBackStack(null)
-                            .commit();
+                // Only enable swiping if this isn't the last question
+                if (position < quiz.getQuestions().size() - 1) {
+                    activity.setSwipeEnabled(true);
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Re-disable swiping when returning to this question
+        if (getActivity() instanceof QuizActivity) {
+            ((QuizActivity) getActivity()).setSwipeEnabled(
+                    quiz.getQuestion(position).isAnswered()
+            );
+        }
     }
 }

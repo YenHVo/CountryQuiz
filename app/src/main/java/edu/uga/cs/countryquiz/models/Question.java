@@ -30,6 +30,10 @@ public class Question implements Serializable {
         this.selectedAnswer = selectedAnswer;
     }
 
+    public boolean isAnswered() {
+        return selectedAnswer != -1;
+    }
+
     public boolean isCorrect() {
         return options.get(selectedAnswer).equals(country.getContinent());
     }
