@@ -1,6 +1,6 @@
 package edu.uga.cs.countryquiz;
 
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ResultFragment#newInstance} factory method to
@@ -20,10 +22,12 @@ public class ResultFragment extends Fragment {
 
     private static final String ARG_SCORE = "score";
     private static final String ARG_TOTAL = "total";
+    private QuizData quizData;
 
     public ResultFragment() {
         // Required empty public constructor
     }
+
     public static ResultFragment newInstance(int score, int totalQuestions) {
         ResultFragment fragment = new ResultFragment();
         Bundle args = new Bundle();
@@ -60,10 +64,34 @@ public class ResultFragment extends Fragment {
                 requireActivity().recreate();
             });
 
-           // historyButton.setOnClickListener(v -> {
-               // todo: implement history button here
+            historyButton.setOnClickListener(v -> {
+                // fetch the quiz history on click
+                new FetchQuizHistory().execute();
+            });
+        }
+    }
 
-           // });
+    // AsyncTask to fetch quiz history
+    private class FetchQuizHistory extends AsyncTask<Void, Void, List<String[]>> {
+
+        @Override
+        protected List<String[]> doInBackground(Void... voids) {
+            quizData = new QuizData(requireContext());
+            quizData.open();
+            List<String[]> results = quizData.getAllQuizResults();
+            quizData.close();
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(List<String[]> results) {
+            super.onPostExecute(results);
+            for (String[] result : results) {
+                String date = result[0];
+                String score = result[1];
+
+                System.out.println("Quiz on " + date + " scored: " + score);
+            }
         }
     }
 }
