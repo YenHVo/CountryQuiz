@@ -12,8 +12,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.uga.cs.countryquiz.CountryQuizDBHelper;
-import edu.uga.cs.countryquiz.R;
 
 public class QuizData {
 
@@ -42,6 +40,8 @@ public class QuizData {
         if (!isCountriesTableEmpty()) {
             return; // avoid duplicate entries
         }
+        Log.d("QuizData", "Inserting countries from CSV...");
+
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(context.getResources().openRawResource(R.raw.country_continent)));
             String line;
@@ -73,7 +73,7 @@ public class QuizData {
         return isEmpty;
     }
 
-    // Add this method to fetch all countries from the database
+
     public List<String[]> getAllCountries() {
         List<String[]> countries = new ArrayList<>();
         Cursor cursor = db.query(CountryQuizDBHelper.TABLE_COUNTRIES,
@@ -91,7 +91,7 @@ public class QuizData {
     public List<String[]> getAllQuizResults() {
         List<String[]> results = new ArrayList<>();
 
-        // Query to fetch quiz results (this assumes you have a table for quizzes in your database)
+
         Cursor cursor = db.query(CountryQuizDBHelper.TABLE_QUIZZES,
                 new String[]{CountryQuizDBHelper.COLUMN_DATE, CountryQuizDBHelper.COLUMN_SCORE},
                 null, null, null, null, null);

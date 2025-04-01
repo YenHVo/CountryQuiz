@@ -62,6 +62,11 @@ public class QuizActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<String[]> countries) {
             super.onPostExecute(countries);
+            if (countries.isEmpty()) {
+                Log.e("QuizActivity", "No countries loaded from database!");
+            } else {
+                Log.d("QuizActivity", "Countries loaded: " + countries.size());
+            }
             countryList = countries;
 
             // Proceed to create the quiz after the data is loaded
