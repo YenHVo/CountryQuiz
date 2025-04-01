@@ -191,20 +191,10 @@ public class QuizActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            showResultFragment();
+
         }
     }
 
-    private void showResultFragment() {
-        // Remove the ViewPager from view
-        viewPager.setVisibility(View.GONE);
-
-        ResultFragment resultFragment = ResultFragment.newInstance(quiz.getScore(), quiz.getQuestions().size());
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, resultFragment)
-                .addToBackStack(null)
-                .commit();
-    }
 
     public void checkQuizCompletion() {
         if (quiz.isComplete() && viewPager.getCurrentItem() == quiz.getQuestions().size() - 1) {
