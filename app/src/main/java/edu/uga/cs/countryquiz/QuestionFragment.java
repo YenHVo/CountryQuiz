@@ -72,7 +72,7 @@ public class QuestionFragment extends Fragment {
         questionText.setText("What continent is " + currentQuestion.getCountry().getName() + " in?");
 
         for (int i = 0; i < optionsRadioGroup.getChildCount() && i < answerOptions.size(); i++) {
-            ((RadioButton) optionsRadioGroup.getChildAt(i)).setText(answerOptions.get(i).getContinent());
+            ((RadioButton) optionsRadioGroup.getChildAt(i)).setText((i + 1) + ". " + answerOptions.get(i).getContinent());
         }
 
         if (currentQuestion.getSelectedAnswer() != -1) {
