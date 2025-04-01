@@ -1,5 +1,6 @@
 package edu.uga.cs.countryquiz;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -65,8 +66,8 @@ public class ResultFragment extends Fragment {
             });
 
             historyButton.setOnClickListener(v -> {
-                // fetch the quiz history on click
-                new FetchQuizHistory().execute();
+                Intent intent = new Intent(getActivity(), HistoryActivity.class);
+                startActivity(intent);
             });
         }
     }
