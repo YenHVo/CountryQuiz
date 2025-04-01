@@ -1,5 +1,6 @@
 package edu.uga.cs.countryquiz;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -59,9 +60,10 @@ public class ResultFragment extends Fragment {
                 requireActivity().recreate();
             });
 
-            historyButton.setOnClickListener(v -> {
+           // historyButton.setOnClickListener(v -> {
                // todo: implement history button here
-            });
+
+           // });
         }
     }
 }

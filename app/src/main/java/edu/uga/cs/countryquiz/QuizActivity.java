@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import edu.uga.cs.countryquiz.AsyncTask;
+import android.os.AsyncTask;
 import edu.uga.cs.countryquiz.QuestionFragment;
 import edu.uga.cs.countryquiz.R;
 import edu.uga.cs.countryquiz.models.Country;
@@ -48,7 +48,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     // AsyncTask to fetch countries from database in background
-    private class FetchCountries extends AsyncTask<Void, Void, List<String[]>> {
+    private class FetchCountries extends AsyncTask <Void, Void, List<String[]>> {
         @Override
         protected List<String[]> doInBackground(Void... voids) {
 
