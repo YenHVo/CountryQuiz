@@ -162,9 +162,13 @@ public class QuizActivity extends AppCompatActivity {
         quiz = new Quiz(quizQuestions);
         setupViewPager(quiz);
     }
-
+    public void updateScore(boolean isCorrect) {
+        if (isCorrect) {
+            score++;
+        }
+    }
     private void saveQuizResult() {
-        new SaveQuizResultTask().execute(score); // Run AsyncTask to save the result
+        new SaveQuizResultTask().execute(score);
     }
 
     private class SaveQuizResultTask extends AsyncTask<Integer, Void, Void> {
@@ -173,10 +177,10 @@ public class QuizActivity extends AppCompatActivity {
             int finalScore = params[0];
             quizData.open(); // Open the database
 
-            // Get the current date
+
             String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-            // Insert quiz result into the database
+
             SQLiteDatabase writableDb = quizData.getWritableDatabaseInstance();
 
             ContentValues values = new ContentValues();
@@ -184,7 +188,7 @@ public class QuizActivity extends AppCompatActivity {
             values.put(CountryQuizDBHelper.COLUMN_SCORE, finalScore);
             writableDb.insert(CountryQuizDBHelper.TABLE_QUIZZES, null, values);
 
-            quizData.close(); // Close the database
+            quizData.close();
             return null;
         }
 

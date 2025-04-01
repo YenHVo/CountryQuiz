@@ -30,6 +30,7 @@ public class QuestionFragment extends Fragment {
     private TextView questionText;
     private RadioGroup optionsRadioGroup;
 
+
     public QuestionFragment() {
         // Required empty public constructor
     }
@@ -75,11 +76,7 @@ public class QuestionFragment extends Fragment {
             ((RadioButton) optionsRadioGroup.getChildAt(i)).setText((i + 1) + ". " + answerOptions.get(i).getContinent());
         }
 
-        if (currentQuestion.getSelectedAnswer() != -1) {
-            ((RadioButton) optionsRadioGroup.getChildAt(currentQuestion.getSelectedAnswer())).setChecked(true);
-        }
 
-        // Restore previous selection if exists
         if (currentQuestion.getSelectedAnswer() != -1) {
             ((RadioButton) optionsRadioGroup.getChildAt(currentQuestion.getSelectedAnswer()))
                     .setChecked(true);
@@ -91,9 +88,16 @@ public class QuestionFragment extends Fragment {
 
             if (getActivity() instanceof QuizActivity) {
                 QuizActivity activity = (QuizActivity) getActivity();
+
+
+                boolean isCorrect = answerOptions.get(selectedIndex).getContinent()
+                        .equals(currentQuestion.getCountry().getContinent());
+
+
+                activity.updateScore(isCorrect);
                 activity.setSwipeEnabled(true);
 
-                // Check if this was the last question
+
                 if (position == quiz.getQuestions().size() - 1) {
                     activity.checkQuizCompletion();
                 }
@@ -104,7 +108,7 @@ public class QuestionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Re-disable swiping when returning to this question
+
         if (getActivity() instanceof QuizActivity) {
             ((QuizActivity) getActivity()).setSwipeEnabled(
                     quiz.getQuestion(position).isAnswered()
