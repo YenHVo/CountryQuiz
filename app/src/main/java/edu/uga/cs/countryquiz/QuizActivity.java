@@ -118,7 +118,7 @@ public class QuizActivity extends AppCompatActivity {
         // ensure countryList is not empty
         if (countryList == null || countryList.isEmpty()) {
             Log.e("QuizActivity", "No countries found in database!");
-            return; // Prevent crash
+            return;
         }
 
         for (int i = 0; i < 6; i++) {
@@ -135,7 +135,7 @@ public class QuizActivity extends AppCompatActivity {
             Set<String> usedContinents = new HashSet<>();
             usedContinents.add(correctCountry.getContinent());
 
-            while (options.size() < 3) {  // 1 correct + 3 wrong options = 4 total options
+            while (options.size() < 3) {
                 int randIndex = random.nextInt(countryList.size());
 
                 if (usedIndices.contains(randIndex)) {
@@ -147,8 +147,8 @@ public class QuizActivity extends AppCompatActivity {
 
                 if (!usedContinents.contains(option.getContinent())) {
                     options.add(option);
-                    usedIndices.add(randIndex);  // Mark this index as used
-                    usedContinents.add(option.getContinent());  // Add continent to used set
+                    usedIndices.add(randIndex);
+                    usedContinents.add(option.getContinent());
                 }
             }
 

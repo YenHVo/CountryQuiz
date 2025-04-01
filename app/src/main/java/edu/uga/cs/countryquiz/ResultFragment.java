@@ -23,10 +23,13 @@ public class ResultFragment extends Fragment {
 
     private static final String ARG_SCORE = "score";
     private static final String ARG_TOTAL = "total";
+    private int score;
+    private int totalQuestions;
 
     public ResultFragment() {
-        // Required empty public constructor
+
     }
+
 
     public static ResultFragment newInstance(int score, int totalQuestions) {
         ResultFragment fragment = new ResultFragment();
@@ -39,26 +42,28 @@ public class ResultFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_result, container, false);
-    }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_result, container, false);
+
+
+        if (getArguments() != null) {
+            score = getArguments().getInt(ARG_SCORE, 0);
+            totalQuestions = getArguments().getInt(ARG_TOTAL, 1);
+        }
+
 
         TextView percentageText = view.findViewById(R.id.percentageText);
         TextView scoreText = view.findViewById(R.id.scoreText);
         Button retryButton = view.findViewById(R.id.retryButton);
         Button historyButton = view.findViewById(R.id.historyButton);
 
-        if (getArguments() != null) {
-            int score = getArguments().getInt(ARG_SCORE, 0);
-            int total = getArguments().getInt(ARG_TOTAL, 1); // Avoid division by zero
 
-            int percentage = (int) (((float) score / total) * 100);
-            percentageText.setText(percentage + "%");
-            scoreText.setText(String.format("You got %d out of %d questions correct!", score, total));
-        }
+        int percentage = (int) (((float) score / totalQuestions) * 100);
+        percentageText.setText(percentage + "%");
+
+
+        scoreText.setText(String.format("You got %d out of %d questions correct!", score, totalQuestions));
+
 
         retryButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), QuizActivity.class);
@@ -66,9 +71,12 @@ public class ResultFragment extends Fragment {
             requireActivity().finish();
         });
 
+
         historyButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), HistoryActivity.class);
             startActivity(intent);
         });
+
+        return view;
     }
 }

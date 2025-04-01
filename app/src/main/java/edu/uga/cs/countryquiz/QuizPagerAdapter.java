@@ -20,14 +20,14 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
     }
 
     @Override
-    public Fragment createFragment(int position){
+    public Fragment createFragment(int position) {
         if (position < quiz.getQuestions().size()) {
-            return QuestionFragment
-                    .newInstance( quiz, position );
+            return QuestionFragment.newInstance(quiz, position);
         } else {
             return ResultFragment.newInstance(quiz.getScore(), quiz.getQuestions().size());
         }
     }
+
 
     @Override
     public int getItemCount() {
