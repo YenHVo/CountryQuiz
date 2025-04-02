@@ -71,7 +71,7 @@ public class QuizActivity extends AppCompatActivity {
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-                if (position == quiz.getQuestions().size()) {
+                if (position == quiz.getQuestions().size() - 1) {
                     saveQuizResult();
                 }
             }
