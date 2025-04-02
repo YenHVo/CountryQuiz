@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-
-import java.io.Serializable;
 import java.util.List;
 
 import edu.uga.cs.countryquiz.models.Question;
