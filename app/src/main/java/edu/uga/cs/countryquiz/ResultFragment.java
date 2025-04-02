@@ -28,7 +28,6 @@ public class ResultFragment extends Fragment {
     private int totalQuestions;
 
     public ResultFragment() {
-
     }
 
     public static ResultFragment newInstance(int score, int totalQuestions) {
