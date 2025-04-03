@@ -65,12 +65,13 @@ public class QuizActivity extends AppCompatActivity {
                 quiz
         );
         viewPager.setOrientation(
-                ViewPager2.ORIENTATION_HORIZONTAL );
+                ViewPager2.ORIENTATION_HORIZONTAL);
         viewPager.setAdapter(adapter);
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
+
                 if (position == quiz.getQuestions().size() - 1) {
                     saveQuizResult();
                 }
@@ -78,12 +79,12 @@ public class QuizActivity extends AppCompatActivity {
         });
     }
 
-    public void setSwipeEnabled (boolean enabled) {
+    public void setSwipeEnabled(boolean enabled) {
         viewPager.setUserInputEnabled(enabled);
     }
 
     // AsyncTask to fetch countries from database in background
-    private class FetchCountries extends AsyncTask <Void, Void, List<String[]>> {
+    private class FetchCountries extends AsyncTask<Void, Void, List<String[]>> {
         @Override
         protected List<String[]> doInBackground(Void... voids) {
 
@@ -187,12 +188,15 @@ public class QuizActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
         }
+
     }
+
 
     public void checkQuizCompletion() {
         Log.d("Quiz Completion", "Quiz completion working " + quiz.isComplete());
         if (quiz.isComplete()) {
             // Enable swipe to results
+            saveQuizResult();
             adapter.showResults();
             adapter.updateResults();
             setSwipeEnabled(true);

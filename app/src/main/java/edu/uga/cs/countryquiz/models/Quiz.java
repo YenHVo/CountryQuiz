@@ -73,6 +73,7 @@ public class Quiz implements Serializable {
         }
     }
 
+
     public boolean isComplete() {
         for (Question question : questions) {
             if (!question.isAnswered()) {
