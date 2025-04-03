@@ -54,7 +54,6 @@ public class HistoryActivity extends AppCompatActivity {
 
     // AsyncTask to fetch quiz history from the database
     private class FetchQuizHistoryTask extends AsyncTask<Void, Void, List<String[]>> {
-
         @Override
         protected List<String[]> doInBackground(Void... voids) {
             quizData.open();

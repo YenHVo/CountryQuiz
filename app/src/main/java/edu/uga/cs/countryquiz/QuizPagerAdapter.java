@@ -1,7 +1,5 @@
 package edu.uga.cs.countryquiz;
 
-import android.util.Log;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
@@ -11,8 +9,6 @@ import edu.uga.cs.countryquiz.models.Quiz;
 
 public class QuizPagerAdapter extends FragmentStateAdapter {
     private final Quiz quiz;
-    private boolean showResults = false;
-
     public QuizPagerAdapter (
             FragmentManager fragmentManager,
             Lifecycle lifecycle,
@@ -23,7 +19,6 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public Fragment createFragment(int position) {
-        Log.d("Create Fragment", "Score: " + quiz.getScore());
         if (position < quiz.getQuestions().size()) {
             return QuestionFragment.newInstance(quiz, position);
         } else {
@@ -36,13 +31,7 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
         return quiz.getQuestions().size() + 1;
     }
 
-    public void showResults() {
-        showResults = true;
-        notifyItemChanged(quiz.getQuestions().size());
-    }
-
     public void updateResults() {
-        Log.d("Update results", "Results: " + quiz.getScore());
         notifyItemChanged(quiz.getQuestions().size());
     }
 }

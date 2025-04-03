@@ -4,14 +4,13 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.os.AsyncTask;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import java.text.SimpleDateFormat;
@@ -23,9 +22,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import android.os.AsyncTask;
-import android.view.View;
-
 import edu.uga.cs.countryquiz.models.Country;
 import edu.uga.cs.countryquiz.models.Question;
 import edu.uga.cs.countryquiz.models.Quiz;
@@ -34,9 +30,7 @@ public class QuizActivity extends AppCompatActivity {
 
     private Quiz quiz;
     private QuizData quizData;
-    //private int score = 0;
     private List<String[]> countryList;
-
     private ViewPager2 viewPager;
     private QuizPagerAdapter adapter;
 
@@ -64,14 +58,13 @@ public class QuizActivity extends AppCompatActivity {
                 getLifecycle(),
                 quiz
         );
-        viewPager.setOrientation(
-                ViewPager2.ORIENTATION_HORIZONTAL);
+
+        viewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         viewPager.setAdapter(adapter);
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-
                 if (position == quiz.getQuestions().size() - 1) {
                     checkQuizCompletion();
                 }
@@ -188,16 +181,12 @@ public class QuizActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
         }
-
     }
 
-
     public void checkQuizCompletion() {
-        Log.d("Quiz Completion", "Quiz completion working " + quiz.isComplete());
         if (quiz.isComplete()) {
             // Enable swipe to results
             saveQuizResult();
-            adapter.showResults();
             adapter.updateResults();
             setSwipeEnabled(true);
         }

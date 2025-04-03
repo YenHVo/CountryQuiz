@@ -1,7 +1,6 @@
 package edu.uga.cs.countryquiz;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,7 +43,6 @@ public class ResultFragment extends Fragment {
         if (getArguments() != null) {
             score = getArguments().getInt(ARG_SCORE, 0);
             totalQuestions = getArguments().getInt(ARG_TOTAL, 1);
-            Log.d("ResultFragment", "Score: " + score + ", Total Questions: " + totalQuestions);
         }
 
         TextView percentageText = view.findViewById(R.id.percentageText);

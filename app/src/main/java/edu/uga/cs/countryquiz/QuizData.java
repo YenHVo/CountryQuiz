@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class QuizData {
 
     private SQLiteDatabase db;
@@ -26,7 +25,6 @@ public class QuizData {
         insertCountriesFromCSV();
         close();
     }
-
 
     public void open() {
         if (db == null || !db.isOpen()) {
@@ -87,7 +85,6 @@ public class QuizData {
         return isEmpty;
     }
 
-
     public List<String[]> getAllCountries() {
         List<String[]> countries = new ArrayList<>();
         Cursor cursor = db.query(CountryQuizDBHelper.TABLE_COUNTRIES,
@@ -102,9 +99,9 @@ public class QuizData {
         cursor.close();
         return countries;
     }
+
     public List<String[]> getAllQuizResults() {
         List<String[]> results = new ArrayList<>();
-
 
         Cursor cursor = db.query(CountryQuizDBHelper.TABLE_QUIZZES,
                 new String[]{CountryQuizDBHelper.COLUMN_DATE, CountryQuizDBHelper.COLUMN_SCORE},

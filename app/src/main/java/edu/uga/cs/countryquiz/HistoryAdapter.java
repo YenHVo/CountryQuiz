@@ -4,15 +4,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
     private List<String[]> quizHistory;
-
     public HistoryAdapter(List<String[]> quizHistory) {
         this.quizHistory = quizHistory;
     }
@@ -36,7 +33,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-
         public TextView dateTextView;
         public TextView scoreTextView;
 
