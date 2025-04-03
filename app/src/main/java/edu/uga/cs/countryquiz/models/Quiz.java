@@ -48,6 +48,10 @@ public class Quiz implements Serializable {
     }
 
     public void recordAnswer(int currentQuestion, int answer) {
+        if (currentQuestion < 0 || currentQuestion >= questions.size()) {
+            Log.e("Quiz", "Invalid question index: " + currentQuestion);
+            return;
+        }
         Question currentQ = questions.get(currentQuestion);
 
         // Store previous state

@@ -73,7 +73,7 @@ public class QuizActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
 
                 if (position == quiz.getQuestions().size() - 1) {
-                    saveQuizResult();
+                    checkQuizCompletion();
                 }
             }
         });
