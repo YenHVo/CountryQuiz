@@ -1,5 +1,7 @@
 package edu.uga.cs.countryquiz.models;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +48,28 @@ public class Quiz implements Serializable {
     }
 
     public void recordAnswer(int currentQuestion, int answer) {
-        questions.get(currentQuestion).setSelectedAnswer(answer);
-        if (questions.get(currentQuestion).isCorrect()) {
-            score++;
+        Question currentQ = questions.get(currentQuestion);
+
+        // Store previous state
+        boolean previouslyCorrect = currentQ.isCorrect();
+        boolean wasAnswered = currentQ.getAlreadyAnswered();
+
+        // Update answer
+        currentQ.setSelectedAnswer(answer);
+        boolean nowCorrect = currentQ.isCorrect();
+
+        if (!wasAnswered) {
+            currentQ.setAlreadyAnswered(true);
+            if (nowCorrect) {
+                score++;
+            }
+        } else {
+            // Handle answer changes
+            if (previouslyCorrect && !nowCorrect) {
+                score--;
+            } else if (!previouslyCorrect && nowCorrect) {
+                score++;
+            }
         }
     }
 

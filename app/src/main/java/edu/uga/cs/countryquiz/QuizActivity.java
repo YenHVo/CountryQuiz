@@ -190,9 +190,11 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     public void checkQuizCompletion() {
-        if (quiz.isComplete() && viewPager.getCurrentItem() == quiz.getQuestions().size() - 1) {
+        Log.d("Quiz Completion", "Quiz completion working " + quiz.isComplete());
+        if (quiz.isComplete()) {
             // Enable swipe to results
             adapter.showResults();
+            adapter.updateResults();
             setSwipeEnabled(true);
         }
     }

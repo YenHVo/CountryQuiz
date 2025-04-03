@@ -74,7 +74,6 @@ public class QuestionFragment extends Fragment {
             ((RadioButton) optionsRadioGroup.getChildAt(i)).setText((i + 1) + ". " + answerOptions.get(i).getContinent());
         }
 
-
         if (currentQuestion.getSelectedAnswer() != -1) {
             ((RadioButton) optionsRadioGroup.getChildAt(currentQuestion.getSelectedAnswer()))
                     .setChecked(true);
@@ -88,10 +87,7 @@ public class QuestionFragment extends Fragment {
             if (getActivity() instanceof QuizActivity) {
                 QuizActivity activity = (QuizActivity) getActivity();
                 activity.setSwipeEnabled(true);
-
-                if (position == quiz.getQuestions().size() - 1) {
-                    activity.checkQuizCompletion();
-                }
+                activity.checkQuizCompletion();
             }
         });
     }

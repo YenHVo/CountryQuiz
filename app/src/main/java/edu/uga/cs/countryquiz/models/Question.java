@@ -6,12 +6,14 @@ import java.util.List;
 public class Question implements Serializable {
     private final Country country;
     private final List<Country> options;
-    private int selectedAnswer; // default for unselected
+    private int selectedAnswer;
+    private boolean alreadyAnswered;
 
     public Question(Country country, List<Country> options) {
         this.country = country;
         this.options = options;
         this.selectedAnswer = -1;
+        this.alreadyAnswered = false;
     }
 
     public Country getCountry() {
@@ -26,6 +28,10 @@ public class Question implements Serializable {
         return selectedAnswer;
     }
 
+    public boolean getAlreadyAnswered() {
+        return alreadyAnswered;
+    }
+
     public void setSelectedAnswer(int selectedAnswer) {
         this.selectedAnswer = selectedAnswer;
     }
@@ -37,6 +43,10 @@ public class Question implements Serializable {
     public boolean isCorrect() {
         if (selectedAnswer == -1) return false;
         return options.get(selectedAnswer).getContinent().equals(country.getContinent());
+    }
+
+    public void setAlreadyAnswered(boolean answer) {
+        this.alreadyAnswered = answer;
     }
 
  }
