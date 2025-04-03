@@ -38,7 +38,7 @@ public class QuizPagerAdapter extends FragmentStateAdapter {
 
     public void showResults() {
         showResults = true;
-        notifyDataSetChanged();
+        notifyItemChanged(quiz.getQuestions().size());
     }
 
     public void updateResults() {
