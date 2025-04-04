@@ -10,11 +10,21 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+/**
+ * The splash screen of the Country Quiz application.
+ * This activity provides buttons for starting a new quiz or viewing quiz history.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private Button startButton;
     private Button historyButton;
 
+    /**
+     * Called when the activity is first created.
+     * Initializes UI components and sets up click listeners.
+     *
+     * @param savedInstanceState The saved state of the application (if any).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         startButton = findViewById( R.id.startButton );
         historyButton = findViewById( R.id.historyButton );
 
+        // Set up button listeners
         startButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, QuizActivity.class);
             startActivity(intent);

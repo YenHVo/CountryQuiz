@@ -26,6 +26,10 @@ import edu.uga.cs.countryquiz.models.Country;
 import edu.uga.cs.countryquiz.models.Question;
 import edu.uga.cs.countryquiz.models.Quiz;
 
+/**
+ * QuizActivity handles the quiz functionality, including fetching country data,
+ * generating quiz questions, managing the quiz view, and saving quiz results.
+ */
 public class QuizActivity extends AppCompatActivity {
 
     private Quiz quiz;
@@ -34,6 +38,11 @@ public class QuizActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private QuizPagerAdapter adapter;
 
+    /**
+     * Called when the activity is first created. Sets up the UI and starts the process
+     * of fetching country data in the background.
+     * @param savedInstanceState The saved state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +61,10 @@ public class QuizActivity extends AppCompatActivity {
         new FetchCountries().execute();
     }
 
+    /**
+     * Sets up the ViewPager with the quiz data and manages quiz progression.
+     * @param quiz The quiz object containing the questions.
+     */
     private void setupViewPager(Quiz quiz) {
         adapter = new QuizPagerAdapter(
                 getSupportFragmentManager(),
@@ -62,6 +75,7 @@ public class QuizActivity extends AppCompatActivity {
         viewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         viewPager.setAdapter(adapter);
 
+        // Checks if the quiz is complete
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -72,11 +86,17 @@ public class QuizActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Enables or disables user swiping in the ViewPager.
+     * @param enabled True to enable swiping, false to disable it.
+     */
     public void setSwipeEnabled(boolean enabled) {
         viewPager.setUserInputEnabled(enabled);
     }
 
-    // AsyncTask to fetch countries from database in background
+    /**
+     * AsyncTask to fetch country data from the database in the background.
+     */
     private class FetchCountries extends AsyncTask<Void, Void, List<String[]>> {
         @Override
         protected List<String[]> doInBackground(Void... voids) {
@@ -103,7 +123,9 @@ public class QuizActivity extends AppCompatActivity {
         }
     }
 
-    // method to create the quiz after countries are loaded
+    /**
+     * Generates quiz questions using randomly selected countries from the database.
+     */
     public void onQuizCreated() {
         List<Question> quizQuestions = new ArrayList<>();
         Random random = new Random();
@@ -114,6 +136,7 @@ public class QuizActivity extends AppCompatActivity {
             return;
         }
 
+        // Generates 6 quiz questions
         for (int i = 0; i < 6; i++) {
             int correctIndex = random.nextInt(countryList.size());
             String[] correctData = countryList.get(correctIndex);
@@ -128,9 +151,9 @@ public class QuizActivity extends AppCompatActivity {
             Set<String> usedContinents = new HashSet<>();
             usedContinents.add(correctCountry.getContinent());
 
+            // Selects 2 additional unique countries from different continents
             while (options.size() < 3) {
                 int randIndex = random.nextInt(countryList.size());
-
                 if (usedIndices.contains(randIndex)) {
                     continue;
                 }
@@ -145,9 +168,11 @@ public class QuizActivity extends AppCompatActivity {
                 }
             }
 
+            // Shuffles options in a random order
             List<Country> optionList = new ArrayList<>(options);
             Collections.shuffle(optionList);
 
+            // Adds questions to the quiz
             Question question = new Question(correctCountry, optionList);
             quizQuestions.add(question);
         }
@@ -156,21 +181,31 @@ public class QuizActivity extends AppCompatActivity {
         setupViewPager(quiz);
     }
 
+    /**
+     * Saves the quiz result asynchronously.
+     */
     private void saveQuizResult() {
         new SaveQuizResultTask().execute(quiz.getScore());
     }
 
+    /**
+     * AsyncTask to save the quiz result to the database.
+     */
     private class SaveQuizResultTask extends AsyncTask<Integer, Void, Void> {
         @Override
         protected Void doInBackground(Integer... params) {
             int finalScore = params[0];
             quizData.open(); // Open the database
+
             String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
             SQLiteDatabase writableDb = quizData.getWritableDatabaseInstance();
 
+            // Prepare score and date to insert into database
             ContentValues values = new ContentValues();
             values.put(CountryQuizDBHelper.COLUMN_DATE, currentDate);
             values.put(CountryQuizDBHelper.COLUMN_SCORE, finalScore);
+
+            // Inserts quiz results into the table
             writableDb.insert(CountryQuizDBHelper.TABLE_QUIZZES, null, values);
 
             quizData.close();
@@ -183,6 +218,9 @@ public class QuizActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks if the quiz is complete and enables results display if finished.
+     */
     public void checkQuizCompletion() {
         if (quiz.isComplete()) {
             // Enable swipe to results
